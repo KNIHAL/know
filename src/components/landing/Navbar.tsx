@@ -9,10 +9,11 @@ import Link from "next/link";
 
 const navItems = [
     { label: "Features", href: "#features" },
+    { label: "How It Works", href: "#how-it-works" },
     { label: "Mock Tests", href: "#mock-tests" },
     { label: "Rankings", href: "#rankings" },
-    { label: "How it Works", href: "#how-it-works" },
 ];
+
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -71,7 +72,7 @@ export default function Navbar() {
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.2 }}
                             >
-                                KNOW
+                                ƙׁׅ֑ꪀׁׅᨵׁׅᨰׁׅ
                             </motion.span>
                             <motion.div
                                 className="absolute -bottom-1 left-0 h-[3px] rounded-full"
