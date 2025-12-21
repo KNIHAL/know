@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Trophy, Target, TrendingUp, Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // Floating element component
 const FloatingElement = ({ delay = 0, children }: { delay?: number, children: React.ReactNode }) => (
