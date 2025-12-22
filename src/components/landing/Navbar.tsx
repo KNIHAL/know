@@ -139,8 +139,11 @@ export default function Navbar() {
                                 variant="ghost"
                                 className="font-medium"
                                 style={{ color: "#16476A" }}
+
                             >
-                                Login
+                                <Link href="/auth/login">
+                                    Login
+                                </Link>
                             </Button>
                         </motion.div>
 
@@ -158,7 +161,7 @@ export default function Navbar() {
                                     color: "#F5F2F2",
                                 }}
                             >
-                                <span className="relative z-10">Sign Up</span>
+                                <span className="relative z-10"> <Link href="/auth/role-page">Sign Up</Link></span>
 
                                 {/* Button hover effect */}
                                 <motion.div
@@ -292,7 +295,9 @@ export default function Navbar() {
                                                 }}
                                                 onClick={() => setMobileOpen(false)}
                                             >
-                                                <span>Sign Up Free</span>
+                                                <span><Link href="/role-page">
+                                                    Get Started
+                                                </Link></span>
                                                 <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                                             </Button>
                                         </motion.div>

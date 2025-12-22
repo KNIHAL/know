@@ -44,12 +44,6 @@ const mockTestFeatures = [
     },
 ];
 
-const testStats = [
-    { value: "500+", label: "Platform Tests", icon: Target },
-    { value: "94%", label: "Accuracy Rate", icon: TrendingUp },
-    { value: "10K+", label: "Tests Taken", icon: Users },
-    { value: "<30min", label: "Result Time", icon: Clock },
-];
 
 export default function MockTests() {
     const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
@@ -144,7 +138,7 @@ export default function MockTests() {
                             className="mt-6 max-w-xl text-lg leading-relaxed"
                             style={{ color: "#16476A", opacity: 0.8 }}
                         >
-                            KNOW's mock tests are not random practice sets. They are{" "}
+                            KNOW's mock tests are{" "}
                             <span className="font-semibold" style={{ color: "#5A7ACD" }}>
                                 platform-level, standardized assessments
                             </span>{" "}
@@ -203,44 +197,6 @@ export default function MockTests() {
                             ))}
                         </div>
 
-                        {/* Stats */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.9 }}
-                            className="mt-12 rounded-xl p-6"
-                            style={{
-                                backgroundColor: "#16476A",
-                                backgroundImage: "linear-gradient(135deg, #16476A 0%, #1E5A8C 100%)"
-                            }}
-                        >
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                {testStats.map((stat, index) => (
-                                    <motion.div
-                                        key={stat.label}
-                                        initial={{ opacity: 0, scale: 0.9 }}
-                                        whileInView={{ opacity: 1, scale: 1 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: 1 + index * 0.1 }}
-                                        whileHover={{ y: -5 }}
-                                        className="text-center"
-                                    >
-                                        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full mb-3"
-                                            style={{ backgroundColor: "#5A7ACD40" }}
-                                        >
-                                            <stat.icon className="h-5 w-5" style={{ color: "#FEB05D" }} />
-                                        </div>
-                                        <div className="text-2xl font-bold text-white mb-1">
-                                            {stat.value}
-                                        </div>
-                                        <div className="text-xs" style={{ color: "#F5F2F2", opacity: 0.9 }}>
-                                            {stat.label}
-                                        </div>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </motion.div>
 
                         {/* CTA */}
                         <motion.div
@@ -250,53 +206,6 @@ export default function MockTests() {
                             transition={{ delay: 1.2 }}
                             className="mt-10 flex flex-wrap gap-4"
                         >
-                            <motion.div
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onHoverStart={() => setHoveredButton("primary")}
-                                onHoverEnd={() => setHoveredButton(null)}
-                                className="relative"
-                            >
-                                <Button
-                                    size="lg"
-                                    className="group px-8 py-6 text-base font-semibold relative overflow-hidden"
-                                    style={{
-                                        backgroundColor: "#5A7ACD",
-                                        color: "#F5F2F2",
-                                    }}
-                                >
-                                    <span className="relative z-10 flex items-center">
-                                        Explore Mock Tests
-                                        <motion.span
-                                            animate={{ x: hoveredButton === "primary" ? 5 : 0 }}
-                                            transition={{ duration: 0.2 }}
-                                            className="ml-2"
-                                        >
-                                            <Target className="h-5 w-5" />
-                                        </motion.span>
-                                    </span>
-
-                                    {/* Button hover effect */}
-                                    <motion.div
-                                        className="absolute inset-0"
-                                        style={{ backgroundColor: "#16476A" }}
-                                        initial={{ x: "-100%" }}
-                                        whileHover={{ x: 0 }}
-                                        transition={{ duration: 0.3 }}
-                                    />
-                                </Button>
-
-                                {/* Glow effect */}
-                                <motion.div
-                                    className="absolute -inset-1 rounded-lg opacity-0 blur-md"
-                                    style={{ backgroundColor: "#5A7ACD" }}
-                                    animate={{
-                                        opacity: hoveredButton === "primary" ? 0.4 : 0
-                                    }}
-                                    transition={{ duration: 0.2 }}
-                                />
-                            </motion.div>
-
                             <motion.div
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}

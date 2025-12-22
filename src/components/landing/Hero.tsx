@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Trophy, Target, TrendingUp, Sparkles } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 
 // Floating element component
 const FloatingElement = ({ delay = 0, children }: { delay?: number, children: React.ReactNode }) => (
@@ -164,43 +165,8 @@ export default function Hero() {
                             className="mt-6 max-w-xl text-lg leading-relaxed"
                             style={{ color: "#16476A", opacity: 0.85 }}
                         >
-                            KNOW is where <span className="font-semibold" style={{ color: "#5A7ACD" }}>real skills</span> are validated through official mock tests, performance-based rankings, and transparent evaluation — not just certificates.
+                            KNOW helps learners <span className="font-semibold" style={{ color: "#5A7ACD" }}> build confidence</span> through official mock tests, performance-based rankings, and clear, transparent evaluation.
                         </motion.p>
-
-                        {/* Stats */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 1, duration: 0.6 }}
-                            className="mt-8 flex flex-wrap gap-6"
-                        >
-                            {[
-                                { label: "Mock Tests", value: "500+", icon: Target },
-                                { label: "Active Students", value: "10K+", icon: TrendingUp },
-                                { label: "Success Rate", value: "94%", icon: Trophy },
-                            ].map((stat, index) => (
-                                <motion.div
-                                    key={stat.label}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: 1.1 + index * 0.1 }}
-                                    whileHover={{ y: -5 }}
-                                    className="flex items-center gap-3"
-                                >
-                                    <div className="rounded-lg p-2" style={{ backgroundColor: "#5A7ACD15" }}>
-                                        <stat.icon className="h-4 w-4" style={{ color: "#5A7ACD" }} />
-                                    </div>
-                                    <div>
-                                        <div className="text-2xl font-bold" style={{ color: "#16476A" }}>
-                                            {stat.value}
-                                        </div>
-                                        <div className="text-sm" style={{ color: "#16476A", opacity: 0.7 }}>
-                                            {stat.label}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </motion.div>
 
                         {/* CTA Buttons */}
                         <motion.div
@@ -224,8 +190,10 @@ export default function Hero() {
                                         color: "#F5F2F2",
                                     }}
                                 >
-                                    <span className="relative z-10 flex items-center">
-                                        Get Started Free
+                                    <span className=" relative z-10 flex items-center">
+                                        <Link href="/auth/role-page">
+                                            Get Started
+                                        </Link>
                                         <motion.span
                                             animate={{ x: hoveredButton === "primary" ? 5 : 0 }}
                                             transition={{ duration: 0.2 }}
@@ -479,6 +447,6 @@ export default function Hero() {
                     </motion.div>
                 </div>
             </div>
-        </section>
+        </section >
     );
 }
