@@ -1,4 +1,4 @@
-"use client";
+ji"use client";
 
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -609,7 +609,7 @@ export default function TeacherSignupPage() {
                                 <p className="text-center text-sm text-gray-400">
                                     Already have an account?{" "}
                                     <a
-                                        href="/login"
+                                        href="/auth/login"
                                         className="text-[#FEB05D] hover:text-[#FFC97E] font-medium transition-colors"
                                     >
                                         Login here
