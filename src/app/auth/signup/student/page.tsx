@@ -10,6 +10,9 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+
+
+
 export default function StudentSignupPage() {
     const router = useRouter();
     const [level, setLevel] = useState("");
@@ -76,15 +79,33 @@ export default function StudentSignupPage() {
         );
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        // Simulate API call
-        setTimeout(() => {
+
+        try {
+            const res = await fetch("/api/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: formData.email,
+                    password: formData.password,
+                    name: formData.fullName,
+                    role: "student",
+                }),
+            });
+
+            if (!res.ok) throw new Error("Signup failed");
+
+            router.push("/auth/login");
+        } catch (err) {
+            alert("Signup failed. Email may already exist.");
+        } finally {
             setIsSubmitting(false);
-            router.push("/student/dashboard"); // Redirect to student dashboard
-        }, 2000);
+        }
     };
+
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({

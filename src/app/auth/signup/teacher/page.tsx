@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+
+
 export default function TeacherSignupPage() {
     const router = useRouter();
     const [expertise, setExpertise] = useState<string[]>([]);
@@ -70,15 +72,33 @@ export default function TeacherSignupPage() {
         );
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        // Simulate API call
-        setTimeout(() => {
+
+        try {
+            const res = await fetch("/api/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: formData.email,
+                    password: formData.password,
+                    name: formData.fullName,
+                    role: "teacher",
+                }),
+            });
+
+            if (!res.ok) throw new Error("Signup failed");
+
+            router.push("/auth/login");
+        } catch (err) {
+            alert("Signup failed. Email may already exist.");
+        } finally {
             setIsSubmitting(false);
-            router.push("/teacher/dashboard"); // Redirect to teacher dashboard
-        }, 2000);
+        }
     };
+
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         setFormData({
@@ -609,7 +629,7 @@ export default function TeacherSignupPage() {
                                 <p className="text-center text-sm text-gray-400">
                                     Already have an account?{" "}
                                     <a
-                                        href="/login"
+                                        href="/auth/login"
                                         className="text-[#FEB05D] hover:text-[#FFC97E] font-medium transition-colors"
                                     >
                                         Login here

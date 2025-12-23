@@ -4,21 +4,42 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Eye, EyeOff, Mail, Lock, LogIn, Sparkles, Zap, ArrowRight } from "lucide-react";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 
 export default function LoginPage() {
+    const router = useRouter();
+
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
     const [hoveredButton, setHoveredButton] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         email: "",
         password: ""
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError("");
         setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => setIsLoading(false), 1500);
+
+        const res = await signIn("credentials", {
+            email: formData.email,
+            password: formData.password,
+            redirect: false,
+        });
+
+        setIsLoading(false);
+
+        if (res?.error) {
+            setError("Invalid email or password");
+            return;
+        }
+
+        // success
+        router.push("/");
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,8 +156,7 @@ export default function LoginPage() {
                             className="text-center mb-8"
                         >
 
-
-                            <h1 className="text-3xl font-bold text-white mb-2">
+                            <h1 className="text-2xl font-bold text-white mb-2">
                                 Welcome Back to{" "}
                                 <span
                                     className="bg-gradient-to-r from-[#5A7ACD] to-[#FEB05D] bg-clip-text text-transparent"
@@ -215,6 +235,7 @@ export default function LoginPage() {
                                     </button>
                                 </div>
                             </motion.div>
+
 
                             {/* Login Button */}
                             <motion.div
@@ -345,7 +366,6 @@ export default function LoginPage() {
                                 </motion.button>
                             </Link>
                         </motion.div>
-
 
                     </div>
                 </div>
