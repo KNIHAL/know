@@ -1,5 +1,8 @@
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export default async function MicroCourseDetail({
     params,
@@ -12,27 +15,45 @@ export default async function MicroCourseDetail({
         .eq("id", params.id)
         .single();
 
-    if (!data) return <p>Course not found.</p>;
+    if (!data) {
+        return <p className="text-slate-400">Course not found.</p>;
+    }
 
     return (
-        <div>
-            <h1 className="text-2xl font-semibold">{data.title}</h1>
-            <p className="mt-2 text-gray-600">{data.description}</p>
-
-            <div className="mt-6 space-y-2">
-                <p>📄 Notes (PDF)</p>
-                <p>📊 PPT Slides</p>
-                <p>🧪 Quiz</p>
-                <p>📝 Internal Practice Test (Teacher)</p>
+        <div className="max-w-4xl space-y-8">
+            {/* Header */}
+            <div>
+                <Badge className="mb-3">Micro-Course</Badge>
+                <h1 className="text-2xl font-semibold text-white">
+                    {data.title}
+                </h1>
+                <p className="mt-2 text-slate-400">
+                    {data.description}
+                </p>
             </div>
 
+            {/* What’s inside */}
+            <Card className="p-6 bg-[#0f172a]/80 border border-white/10">
+                <h2 className="text-lg font-semibold text-white mb-4">
+                    What’s included
+                </h2>
 
-            <Link
-                href={`/student/micro-courses/${params.id}/test`}
-                className="inline-block mt-4 bg-black text-white px-4 py-2 rounded"
-            >
-                Start Practice Test
-            </Link>
+                <ul className="space-y-2 text-slate-300 text-sm">
+                    <li>📄 Notes (PDF)</li>
+                    <li>📊 PPT Slides</li>
+                    <li>🧪 Quizzes</li>
+                    <li>📝 Internal Practice Test (Teacher)</li>
+                </ul>
+            </Card>
+
+            {/* CTA */}
+            <div>
+                <Button asChild size="lg" className="rounded-xl">
+                    <Link href={`/student/micro-courses/${params.id}/test`}>
+                        Start Practice Test
+                    </Link>
+                </Button>
+            </div>
         </div>
     );
 }
