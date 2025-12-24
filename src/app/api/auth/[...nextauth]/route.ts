@@ -1,11 +1,11 @@
-import NextAuth from "next-auth";
+import NextAuth, { type AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { supabase } from "@/lib/supabase";
 import bcrypt from "bcrypt";
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   session: {
-    strategy: "jwt",
+    strategy: "jwt", // ✅ literal type, TS error fixed
   },
 
   providers: [
@@ -65,6 +65,8 @@ const handler = NextAuth({
   pages: {
     signIn: "/login",
   },
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

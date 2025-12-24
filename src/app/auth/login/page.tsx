@@ -3,13 +3,14 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Eye, EyeOff, Mail, Lock, LogIn, Sparkles, Zap, ArrowRight } from "lucide-react";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { getSession, useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 
 export default function LoginPage() {
     const router = useRouter();
+    const { data: session, status } = useSession();
 
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +18,7 @@ export default function LoginPage() {
     const [hoveredButton, setHoveredButton] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         email: "",
-        password: ""
+        password: "",
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -35,17 +36,21 @@ export default function LoginPage() {
 
         if (res?.error) {
             setError("Invalid email or password");
-            return;
         }
 
-        // success
-        router.push("/");
+        const session = await getSession();
+
+        if (session?.user?.role === "student") {
+            router.replace("/student/dashboard");
+        } else if (session?.user?.role === "teacher") {
+            router.replace("/teacher/dashboard");
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.value,
         });
     };
 
