@@ -15,7 +15,7 @@ export default async function StudentLayout({
         redirect("/login");
     }
 
-    // Role check (VERY IMPORTANT)
+    // Role check
     if (session.user.role !== "student") {
         redirect("/unauthorized");
     }
@@ -23,7 +23,22 @@ export default async function StudentLayout({
     return (
         <div className="flex min-h-screen">
             <StudentSidebar />
-            <main className="flex-1 bg-gray-50 p-6">{children}</main>
+
+            {/* MAIN CONTENT AREA */}
+            <main
+                className="
+                    flex-1 px-4 md:px-6 py-6
+                    bg-gradient-to-br
+                    from-[#f6f4ee]
+                    via-[#f1efe9]
+                    to-[#ebe7df]
+                    dark:from-[#020617]
+                    dark:via-[#020617]
+                    dark:to-[#020617]
+                "
+            >
+                {children}
+            </main>
         </div>
     );
 }

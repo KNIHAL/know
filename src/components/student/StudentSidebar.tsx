@@ -174,7 +174,7 @@ export default function StudentSidebar() {
         <div className={`
       flex flex-col h-full transition-all duration-300
       ${isCollapsed && !isMobile ? 'w-20' : 'w-64'}
-      bg-gradient-to-b from-[#1a237e] to-[#283593] dark:from-gray-900 dark:to-gray-800
+      bg-gradient-to-b from-[#1a221e] to-[#283694] dark:from-gray-900 dark:to-gray-800
       text-white dark:text-gray-200
     `}>
             {/* Header with toggle */}
