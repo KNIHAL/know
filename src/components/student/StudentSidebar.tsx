@@ -38,7 +38,6 @@ const links = [
     { name: "Mock Tests", href: "/student/mock-tests", icon: FileText },
     { name: "Results", href: "/student/results", icon: BarChart3 },
     { name: "Rankings", href: "/student/rankings", icon: Trophy },
-    { name: "Profile", href: "/student/profile", icon: User },
 ];
 
 const bottomLinks = [
