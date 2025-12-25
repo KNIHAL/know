@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/utils/authOptions";
 import { supabase } from "@/lib/supabase";
 
 type ContentType = "micro_course" | "platform_mock_test";
