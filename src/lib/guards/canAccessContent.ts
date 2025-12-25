@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { supabase } from "@/lib/supabase";
 
 type ContentType = "micro_course" | "platform_mock_test";
@@ -15,17 +15,19 @@ export async function canAccessContent({
   contentType,
   price,
 }: GuardInput): Promise<{ allowed: boolean }> {
-  // Free content → always allowed
+  // ✅ Free content → always allowed
   if (!price || price === 0) {
     return { allowed: true };
   }
 
+  // ✅ NextAuth session (App Router compatible)
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
     return { allowed: false };
   }
 
+  // ✅ Purchase check
   const { data } = await supabase
     .from("student_purchases")
     .select("id")
