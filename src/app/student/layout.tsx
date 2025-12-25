@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import StudentSidebar from "@/components/student/StudentSidebar";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/utils/authOptions";
 
 export default async function StudentLayout({
     children,
