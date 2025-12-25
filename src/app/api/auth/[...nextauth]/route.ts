@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 
 export const authOptions: AuthOptions = {
   session: {
-    strategy: "jwt", // ✅ literal type, TS error fixed
+    strategy: "jwt", 
   },
 
   providers: [
@@ -38,7 +38,7 @@ export const authOptions: AuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role as "student" | "teacher",
+          role: user.role as "student",
         };
       },
     }),
@@ -56,7 +56,7 @@ export const authOptions: AuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as "student" | "teacher";
+        session.user.role = token.role as "student";
       }
       return session;
     },

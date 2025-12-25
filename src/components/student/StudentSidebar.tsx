@@ -13,9 +13,6 @@ import {
     User,
     Settings,
     HelpCircle,
-    Bell,
-    Calendar,
-    TrendingUp,
     LogOut,
     Menu,
     X,
@@ -231,9 +228,7 @@ export default function StudentSidebar() {
                                 <h3 className="font-semibold text-sm">
                                     {user.name || "Student Name"}
                                 </h3>
-                                <p className="text-xs text-blue-100 dark:text-gray-400">
-                                    {user.stream || "Your Stream"}
-                                </p>
+
                             </div>
                         </div>
                     ) : (

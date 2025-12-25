@@ -161,7 +161,7 @@ export default function Navbar() {
                                     color: "#F5F2F2",
                                 }}
                             >
-                                <span className="relative z-10"> <Link href="/auth/role-page">Sign Up</Link></span>
+                                <span className="relative z-10"> <Link href="/auth/signup/student">Sign Up</Link></span>
 
                                 {/* Button hover effect */}
                                 <motion.div
