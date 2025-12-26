@@ -42,7 +42,7 @@ export default function LoginPage() {
 
         if (session?.user?.role === "student") {
             router.replace("/student/dashboard");
-        } else if (session?.user?.role === "teacher") {
+        } else if (session?.user?.role === "admin") {
             router.replace("/teacher/dashboard");
         }
     };
