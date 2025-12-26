@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { canAccessContent } from "@/lib/guards/canAccessContent";
 import PaidContentGuard from "@/components/student/PaidContentGuard";
+import BuyNowButton from "@/components/student/BuyNowButton";
 
 export default async function MicroCourseDetail({
     params,
@@ -29,7 +30,16 @@ export default async function MicroCourseDetail({
     });
 
     return (
-        <PaidContentGuard allowed={allowed} price={data.price}>
+        <PaidContentGuard
+            allowed={allowed}
+            fallback={
+                <BuyNowButton
+                    price={data.price}
+                    contentId={data.id}
+                    contentType="micro_course"
+                />
+            }
+        >
             <div className="max-w-4xl space-y-8">
                 {/* Header */}
                 <div>

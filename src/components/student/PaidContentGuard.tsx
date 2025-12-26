@@ -1,22 +1,19 @@
-import { ReactNode } from "react";
-import PurchaseCard from "./PurchaseCard";
+import React from "react";
 
-interface Props {
+type Props = {
     allowed: boolean;
-    price?: number | null;
-    children: ReactNode;
-}
+    children: React.ReactNode;
+    fallback?: React.ReactNode;
+};
 
 export default function PaidContentGuard({
     allowed,
-    price,
     children,
+    fallback,
 }: Props) {
-    if (allowed) return <>{children}</>;
+    if (!allowed) {
+        return <>{fallback ?? null}</>;
+    }
 
-    return (
-        <div className="flex justify-center mt-10">
-            <PurchaseCard price={price} />
-        </div>
-    );
+    return <>{children}</>;
 }

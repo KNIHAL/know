@@ -1,5 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { useSession } from "next-auth/react";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -30,7 +34,10 @@ function RankRowItem({ row }: { row: RankRow }) {
                     {row.rank}
                 </span>
                 <User size={16} className="text-slate-400" />
-                <span className={`text-sm ${row.isYou ? "text-white font-medium" : "text-slate-300"}`}>
+                <span
+                    className={`text-sm ${row.isYou ? "text-white font-medium" : "text-slate-300"
+                        }`}
+                >
                     {row.name}
                 </span>
                 {row.isYou && <Badge variant="secondary">You</Badge>}
@@ -42,12 +49,58 @@ function RankRowItem({ row }: { row: RankRow }) {
 }
 
 export default function RankingsPage() {
-    const leaderboard: RankRow[] = [
-        { rank: 1, name: "Aarav Sharma", score: "285 / 300" },
-        { rank: 2, name: "Neha Verma", score: "278 / 300" },
-        { rank: 3, name: "Rahul Singh", score: "272 / 300" },
-        { rank: 128, name: "You", score: "210 / 300", isYou: true },
-    ];
+    const { data: session, status } = useSession();
+    const [leaderboard, setLeaderboard] = useState<RankRow[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (status !== "authenticated" || !session?.user?.id) return;
+
+        async function loadLeaderboard() {
+            setLoading(true);
+
+            // latest published mock test
+            const { data: test } = await supabase
+                .from("platform_mock_tests")
+                .select("id, total_marks")
+                .eq("is_published", true)
+                .order("created_at", { ascending: false })
+                .limit(1)
+                .single();
+
+            if (!test) {
+                setLeaderboard([]);
+                setLoading(false);
+                return;
+            }
+
+            // rankings from SQL function
+            const { data: ranks } = await supabase.rpc("get_rankings", {
+                test_id: test.id,
+            });
+
+            if (!ranks) {
+                setLeaderboard([]);
+                setLoading(false);
+                return;
+            }
+
+            const userId = session?.user?.id ?? "";
+
+            const rows: RankRow[] = ranks.map((r: any) => ({
+                rank: r.rank,
+                name: r.student_id === userId ? "You" : `Student ${r.rank}`,
+                score: `${r.score} / ${test.total_marks}`,
+                isYou: r.student_id === userId,
+            }));
+
+
+            setLeaderboard(rows);
+            setLoading(false);
+        }
+
+        loadLeaderboard();
+    }, [status, session?.user?.id]);
 
     return (
         <div className="max-w-4xl space-y-8">
@@ -59,36 +112,23 @@ export default function RankingsPage() {
                 </p>
             </div>
 
-            {/* Filters (UI only) */}
+            {/* Filters (UI only – future-ready) */}
             <div className="flex flex-wrap gap-4 text-white">
-                <Select>
+                <Select disabled>
                     <SelectTrigger className="w-40">
                         <SelectValue placeholder="Stream" />
                     </SelectTrigger>
-                    <SelectContent className="
-                        bg-[#020617]
-                        text-slate-200
-                        border border-white/10
-                        shadow-xl
-                    ">
-                        <SelectItem value="all" className="text-white">All</SelectItem>
-                        <SelectItem value="jee" className="text-white">JEE</SelectItem>
-                        <SelectItem value="neet" className="text-white">NEET</SelectItem>
+                    <SelectContent className="bg-[#020617] border border-white/10">
+                        <SelectItem value="all">All</SelectItem>
                     </SelectContent>
                 </Select>
 
-                <Select>
+                <Select disabled>
                     <SelectTrigger className="w-40">
                         <SelectValue placeholder="Mock Test" />
                     </SelectTrigger>
-                    <SelectContent className="
-                        bg-[#020617]
-                        text-slate-200
-                        border border-white/10
-                        shadow-xl
-                    ">
-                        <SelectItem value="latest" className="text-white">Latest Test</SelectItem>
-                        <SelectItem value="mock1" className="text-white">Mock Test 01</SelectItem>
+                    <SelectContent className="bg-[#020617] border border-white/10">
+                        <SelectItem value="latest">Latest Test</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
@@ -102,9 +142,15 @@ export default function RankingsPage() {
                 </CardHeader>
 
                 <CardContent className="space-y-2">
-                    {leaderboard.map((row) => (
-                        <RankRowItem key={row.rank} row={row} />
-                    ))}
+                    {loading ? (
+                        <p className="text-slate-400">Loading leaderboard...</p>
+                    ) : leaderboard.length > 0 ? (
+                        leaderboard.map((row) => (
+                            <RankRowItem key={row.rank} row={row} />
+                        ))
+                    ) : (
+                        <p className="text-slate-400">No rankings available yet.</p>
+                    )}
                 </CardContent>
             </Card>
         </div>
