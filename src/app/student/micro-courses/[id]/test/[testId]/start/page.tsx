@@ -54,7 +54,7 @@ export default async function StartMicroCourseTest({
         .eq("test_id", params.testId);
 
     return (
-        <PaidContentGuard allowed={allowed} price={course.price}>
+        <PaidContentGuard allowed={allowed}>
             <div className="max-w-4xl space-y-6">
                 {/* Header */}
                 <div>
