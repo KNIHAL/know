@@ -38,7 +38,8 @@ export const authOptions: AuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role as "student",
+          role: user.role as "student" | "admin",
+
         };
       },
     }),
@@ -56,7 +57,8 @@ export const authOptions: AuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as "student";
+        session.user.role = token.role as "student" | "admin";
+
       }
       return session;
     },
