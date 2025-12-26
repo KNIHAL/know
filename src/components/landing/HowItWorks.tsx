@@ -14,30 +14,30 @@ import { useState } from "react";
 const steps = [
     {
         step: "01",
-        title: "Learn with Structured Content",
-        desc: "Access high-quality notes, PPTs, and guided material designed for concept clarity.",
+        title: "Understand Yourself",
+        desc: "Explore your interests, abilities, and learning preferences through guided resources.",
         icon: BookOpen,
         color: "#5A7ACD",
         gradient: "from-[#5A7ACD] to-[#7E9CFF]",
-        features: ["Stream-specific", "Self-paced", "Interactive"]
+        features: ["Interest-based", "Self-paced", "Reflective"]
     },
     {
         step: "02",
-        title: "Practice with Mock Tests",
-        desc: "Attempt platform-created mock tests that simulate real exam difficulty and pressure.",
+        title: "Explore Career Directions",
+        desc: "Use simple assessments to understand which career paths suit you better.",
         icon: Target,
         color: "#FEB05D",
         gradient: "from-[#FEB05D] to-[#FFC97E]",
-        features: ["Time-bound", "Auto-evaluated", "Performance analytics"]
+        features: ["Low-pressure", "Insight-driven", "Clarity focused"]
     },
     {
         step: "03",
-        title: "Get Ranked & Validated",
-        desc: "Receive ranks, scores, and percentiles based purely on your performance.",
+        title: "Grow with Direction",
+        desc: "Follow structured guidance to build skills with confidence and purpose.",
         icon: Trophy,
         color: "#10B981",
         gradient: "from-[#10B981] to-[#34D399]",
-        features: ["Stream leaderboards", "Percentile scores", "Skill certification"]
+        features: ["Clear next steps", "Focused growth", "Confidence building"]
     },
 ];
 
@@ -123,11 +123,11 @@ export default function HowItWorks() {
                         className="mt-6 text-xl leading-relaxed"
                         style={{ color: "#16476A", opacity: 0.8 }}
                     >
-                        A simple, transparent flow focused on{" "}
+                        A simple,{" "}
                         <span className="font-semibold" style={{ color: "#5A7ACD" }}>
-                            real skill validation
+                            transparent process to discover your strengths and direction.
                         </span>
-                        , not just learning.
+
                     </motion.p>
                 </motion.div>
 

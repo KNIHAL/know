@@ -105,8 +105,8 @@ export default function Footer() {
                     style={{ color: "#16476A", opacity: 0.6 }}
                 >
                     <p>
-                        Built for skill validation. Performance over certificates.
-                        This is an MVP platform.
+                        Understand your strengths. Grow with clarity.
+
                     </p>
                 </motion.div>
             </div>

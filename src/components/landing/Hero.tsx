@@ -123,7 +123,7 @@ export default function Hero() {
                                 >
                                     <Trophy className="h-3 w-3" />
                                 </motion.div>
-                                Skill Validation Platform
+                                Career Discovery Platform
                             </Badge>
                         </FloatingElement>
 
@@ -133,10 +133,10 @@ export default function Hero() {
                                 initial={{ y: 50, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
                                 transition={{ delay: 0.4, duration: 0.6 }}
-                                className="max-w-xl text-4xl font-bold leading-tight sm:text-5xl md:text-6xl"
+                                className="max-w-xl text-xl font-bold leading-tight sm:text-3xl md:text-3xl"
                                 style={{ color: "#16476A" }}
                             >
-                                Learn. Practice.
+                                Discover Your Strengths.
                                 <br />
                                 <motion.span
                                     initial={{ opacity: 0, x: -20 }}
@@ -145,7 +145,7 @@ export default function Hero() {
                                     className="relative inline-block"
                                     style={{ color: "#5A7ACD" }}
                                 >
-                                    Prove Your Skills.
+                                    Choose Your Career with Clarity.
                                     <motion.div
                                         className="absolute -bottom-2 left-0 h-[3px] rounded-full"
                                         style={{ backgroundColor: "#FEB05D" }}
@@ -165,7 +165,7 @@ export default function Hero() {
                             className="mt-6 max-w-xl text-lg leading-relaxed"
                             style={{ color: "#16476A", opacity: 0.85 }}
                         >
-                            KNOW helps learners <span className="font-semibold" style={{ color: "#5A7ACD" }}> build confidence</span> through official mock tests, performance-based rankings, and clear, transparent evaluation.
+                            KNOW helps students understand their <span className="font-semibold" style={{ color: "#5A7ACD" }}>inner strengths,</span> explore suitable career paths, and move forward with confidence through structured guidance and evaluation..
                         </motion.p>
 
                         {/* CTA Buttons */}
@@ -191,7 +191,7 @@ export default function Hero() {
                                     }}
                                 >
                                     <span className=" relative z-10 flex items-center">
-                                        <Link href="/auth/role-page">
+                                        <Link href="/auth/signup/student">
                                             Get Started
                                         </Link>
                                         <motion.span
@@ -241,7 +241,9 @@ export default function Hero() {
                                     }}
                                 >
                                     <span className="relative z-10 flex items-center">
-                                        Explore Mock Tests
+                                        <Link href="/auth/login">
+                                            Explore Mock Tests
+                                        </Link>
                                         <motion.div
                                             animate={{ rotate: hoveredButton === "secondary" ? 90 : 0 }}
                                             transition={{ duration: 0.3 }}

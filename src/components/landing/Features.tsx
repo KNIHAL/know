@@ -18,38 +18,55 @@ import { useState } from "react";
 
 const features = [
     {
-        title: "Structured Learning",
-        desc: "Well-organized notes, PPTs, quizzes and mock tests designed for clarity and depth.",
+        title: "Strength Discovery",
+        desc: "Resources and activities that help students understand their interests and natural abilities.",
         icon: BookOpen,
         color: "#5A7ACD",
         gradient: "from-[#5A7ACD] to-[#7E9CFF]",
-        points: ["Stream-wise content", "Progressive difficulty", "Self-paced learning"]
+        points: [
+            "Interest-based exploration",
+            "Skill awareness building",
+            "Self-paced understanding"
+        ]
     },
     {
-        title: "Official Mock Tests",
-        desc: "Platform-created mock tests with real exam-level difficulty and evaluation.",
+        title: "Guided Assessments",
+        desc: "Simple assessments designed to provide clarity without pressure or competition.",
         icon: Target,
         color: "#FEB05D",
         gradient: "from-[#FEB05D] to-[#FFC97E]",
-        points: ["Time-bound tests", "Auto evaluation", "Performance analytics"]
+        points: [
+            "Low-pressure evaluations",
+            "Clarity-focused insights",
+            "Progress understanding"
+        ]
     },
     {
-        title: "Rankings & Percentile",
-        desc: "Transparent rankings based only on performance in official platform tests.",
+        title: "Career Direction Insights",
+        desc: "Clear insights that help students explore and compare suitable career options.",
         icon: Trophy,
         color: "#10B981",
         gradient: "from-[#10B981] to-[#34D399]",
-        points: ["Stream leaderboards", "Percentile scores", "Skill validation"]
+        points: [
+            "Career path suggestions",
+            "Strength-based comparison",
+            "Confidence building"
+        ]
     },
     {
-        title: "Micro-Courses",
-        desc: "Complete learning bundles combining content + practice into one focused path.",
+        title: "Focused Growth Paths",
+        desc: "Structured paths that help students grow step by step with direction.",
         icon: Package,
         color: "#8B5CF6",
         gradient: "from-[#8B5CF6] to-[#A78BFA]",
-        points: ["Bundle discounts", "Complete syllabus", "Integrated learning"]
+        points: [
+            "Goal-oriented learning",
+            "Clear next steps",
+            "Reduced confusion"
+        ]
     },
 ];
+
 
 export default function Features() {
     const [hoveredCard, setHoveredCard] = useState<number | null>(null);
@@ -113,7 +130,7 @@ export default function Features() {
                     >
                         <Sparkles className="h-4 w-4" style={{ color: "#5A7ACD" }} />
                         <span className="text-sm font-medium" style={{ color: "#5A7ACD" }}>
-                            Core Differentiators
+                            Built for Career Clarity
                         </span>
                     </motion.div>
 
@@ -135,7 +152,7 @@ export default function Features() {
                         >
                             KNOW
                         </motion.span>{" "}
-                        is Different
+                        exists?
                     </motion.h2>
 
                     <motion.p
@@ -148,9 +165,9 @@ export default function Features() {
                     >
                         We focus on{" "}
                         <span className="font-semibold" style={{ color: "#5A7ACD" }}>
-                            real skill validation
+                            helping students understand themselves
                         </span>
-                        , not just content consumption. Your performance is your proof.
+                        , explore the right career paths, and move forward with clarity and confidence.
                     </motion.p>
                 </motion.div>
 
