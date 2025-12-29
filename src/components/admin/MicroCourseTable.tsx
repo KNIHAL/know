@@ -1,98 +1,65 @@
 "use client";
 
+import { useTransition } from "react";
 import Link from "next/link";
+import { toggleMicroCoursePublish } from "@/app/admin/micro-courses/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { useTransition } from "react";
+import ConfirmActionButton from "./ConfirmActionButton";
 
-export default function MicroCourseTable({
-    courses,
-    onToggle,
-}: {
-    courses: any[];
-    onToggle: (id: string, value: boolean) => Promise<void>;
-}) {
-    const [isPending, startTransition] = useTransition();
+type Course = {
+    id: string;
+    title: string;
+    price: number;
+    is_published: boolean;
+};
+
+export default function MicroCourseTable({ courses }: { courses: Course[] }) {
+    const [pending, start] = useTransition();
+
+    if (!courses.length) {
+        return (
+            <div className="p-8 text-slate-400 text-center border border-white/10 rounded-lg">
+                No micro-courses yet.
+            </div>
+        );
+    }
 
     return (
-        <div className="space-y-4">
-            {/* Desktop */}
-            <div className="hidden md:block">
-                <table className="w-full text-sm border border-white/10">
-                    <thead className="bg-white/5">
-                        <tr>
-                            <th className="p-3 text-left">Title</th>
-                            <th className="p-3">Price</th>
-                            <th className="p-3">Status</th>
-                            <th className="p-3">Publish</th>
-                            <th className="p-3">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {courses.map((c) => (
-                            <tr key={c.id} className="border-t border-white/10">
-                                <td className="p-3">{c.title}</td>
-                                <td className="p-3">₹{c.price}</td>
-                                <td className="p-3">
-                                    <Badge>
-                                        {c.is_published ? "Published" : "Draft"}
-                                    </Badge>
-                                </td>
-                                <td className="p-3">
-                                    <Switch
-                                        checked={c.is_published}
-                                        disabled={isPending}
-                                        onCheckedChange={(val) =>
-                                            startTransition(() => onToggle(c.id, val))
-                                        }
-                                    />
-                                </td>
-                                <td className="p-3">
-                                    <Link href={`/admin/micro-courses/${c.id}/edit`}>
-                                        <Button size="sm" variant="outline">
-                                            Edit
-                                        </Button>
-                                    </Link>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+        <div className="space-y-3">
+            {courses.map((c) => (
+                <div
+                    key={c.id}
+                    className="flex items-center justify-between p-4 border border-white/10 rounded-lg"
+                >
+                    <div>
+                        <p className="text-white font-medium">{c.title}</p>
+                        <p className="text-sm text-slate-400">₹{c.price}</p>
+                    </div>
 
-            {/* Mobile */}
-            <div className="md:hidden space-y-3">
-                {courses.map((c) => (
-                    <div
-                        key={c.id}
-                        className="border border-white/10 p-4 rounded-lg space-y-2"
-                    >
-                        <div className="font-semibold">{c.title}</div>
-                        <div className="text-sm text-slate-400">₹{c.price}</div>
-
-                        <div className="flex items-center justify-between">
-                            <Badge>
-                                {c.is_published ? "Published" : "Draft"}
-                            </Badge>
-
-                            <Switch
-                                checked={c.is_published}
-                                disabled={isPending}
-                                onCheckedChange={(val) =>
-                                    startTransition(() => onToggle(c.id, val))
-                                }
-                            />
-                        </div>
+                    <div className="flex items-center gap-3 text-black">
+                        <Badge variant={c.is_published ? "default" : "secondary"}>
+                            {c.is_published ? "Published" : "Draft"}
+                        </Badge>
 
                         <Link href={`/admin/micro-courses/${c.id}/edit`}>
-                            <Button size="sm" className="w-full">
-                                Edit
-                            </Button>
+                            <Button size="sm" variant="outline">Edit</Button>
                         </Link>
+
+                        <ConfirmActionButton
+                            label={c.is_published ? "Unpublish" : "Publish"}
+                            confirmText={
+                                c.is_published
+                                    ? "This course will be hidden from students."
+                                    : "This course will be visible to students."
+                            }
+                            onConfirm={async () =>
+                                toggleMicroCoursePublish(c.id, !c.is_published)
+                            }
+                        />
                     </div>
-                ))}
-            </div>
+                </div>
+            ))}
         </div>
     );
 }

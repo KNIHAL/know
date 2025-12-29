@@ -1,66 +1,43 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, FileText } from "lucide-react";
 
-type TestStatus = "upcoming" | "live" | "ended";
-
-function StatusBadge({ status }: { status: TestStatus }) {
-    const map = {
-        upcoming: "secondary",
-        live: "default",
-        ended: "outline",
-    } as const;
-
-    return <Badge variant={map[status]}>{status.toUpperCase()}</Badge>;
-}
-
-function MockTestCard({
-    title,
-    duration,
-    questions,
-    status,
-}: {
+type Test = {
+    id: string;
     title: string;
-    duration: string;
-    questions: number;
-    status: TestStatus;
-}) {
+    duration_minutes: number;
+    total_marks: number;
+};
+
+function MockTestCard({ test }: { test: Test }) {
     return (
         <Card className="bg-[#0f172a]/80 border border-white/10 hover:border-blue-500/40 transition">
-            <CardHeader className="space-y-2">
-                <div className="flex items-center justify-between">
-                    <CardTitle className="text-white text-base">{title}</CardTitle>
-                    <StatusBadge status={status} />
-                </div>
+            <CardHeader>
+                <CardTitle className="text-white text-base">
+                    {test.title}
+                </CardTitle>
             </CardHeader>
 
             <CardContent className="space-y-4">
                 <div className="flex items-center gap-4 text-sm text-slate-300">
                     <div className="flex items-center gap-1">
-                        <Clock size={14} /> {duration}
+                        <Clock size={14} /> {test.duration_minutes} min
                     </div>
                     <div className="flex items-center gap-1">
-                        <FileText size={14} /> {questions} Questions
+                        <FileText size={14} /> {test.total_marks} Marks
                     </div>
                 </div>
 
                 <div className="flex justify-end">
-                    {status === "live" && (
+                    <Link href={`/student/mock-tests/${test.id}/start`}>
                         <Button size="sm">Start Test</Button>
-                    )}
-                    {status === "upcoming" && (
-                        <Button size="sm" variant="secondary" disabled>
-                            Not Started
-                        </Button>
-                    )}
-                    {status === "ended" && (
-                        <Button size="sm" variant="outline">
-                            View Result
-                        </Button>
-                    )}
+                    </Link>
                 </div>
             </CardContent>
         </Card>
@@ -68,26 +45,27 @@ function MockTestCard({
 }
 
 export default function MockTestsPage() {
-    const tests = [
-        {
-            title: "JEE Full Length Mock – 01",
-            duration: "3 Hours",
-            questions: 90,
-            status: "live" as TestStatus,
-        },
-        {
-            title: "NEET Practice Mock – Biology",
-            duration: "2 Hours",
-            questions: 60,
-            status: "upcoming" as TestStatus,
-        },
-        {
-            title: "CUET General Test – 2024",
-            duration: "1.5 Hours",
-            questions: 75,
-            status: "ended" as TestStatus,
-        },
-    ];
+    const [tests, setTests] = useState<Test[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchTests() {
+            const { data } = await supabase
+                .from("platform_mock_tests")
+                .select("id, title, duration_minutes, total_marks")
+                .eq("is_published", true)
+                .order("created_at", { ascending: false });
+
+            setTests(data || []);
+            setLoading(false);
+        }
+
+        fetchTests();
+    }, []);
+
+    if (loading) {
+        return <p className="text-slate-400">Loading mock tests…</p>;
+    }
 
     return (
         <div className="max-w-6xl space-y-8">
@@ -102,11 +80,17 @@ export default function MockTestsPage() {
             </div>
 
             {/* List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {tests.map((t, i) => (
-                    <MockTestCard key={i} {...t} />
-                ))}
-            </div>
+            {tests.length ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {tests.map((t) => (
+                        <MockTestCard key={t.id} test={t} />
+                    ))}
+                </div>
+            ) : (
+                <p className="text-slate-400">
+                    No platform mock tests available yet.
+                </p>
+            )}
         </div>
     );
 }

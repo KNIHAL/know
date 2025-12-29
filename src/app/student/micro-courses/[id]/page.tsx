@@ -12,61 +12,80 @@ export default async function MicroCourseDetail({
 }: {
     params: { id: string };
 }) {
-    const { data } = await supabase
+    const { data: course } = await supabase
         .from("micro_courses")
         .select("*")
         .eq("id", params.id)
+        .eq("is_published", true)
         .single();
 
-    if (!data) {
-        return <p className="text-slate-400">Course not found.</p>;
+    if (!course) {
+        return <p className="text-slate-400">This micro-course is not available.</p>;
     }
 
-    // 🔐 SERVER-SIDE ACCESS CHECK
     const { allowed } = await canAccessContent({
-        contentId: data.id,
+        contentId: course.id,
         contentType: "micro_course",
-        price: data.price,
+        price: course.price,
     });
+
+    const { data: assets } = await supabase
+        .from("micro_course_assets")
+        .select("id, type, title, url")
+        .eq("course_id", course.id)
+        .order("created_at", { ascending: true });
 
     return (
         <PaidContentGuard
             allowed={allowed}
             fallback={
                 <BuyNowButton
-                    price={data.price}
-                    contentId={data.id}
+                    price={course.price}
+                    contentId={course.id}
                     contentType="micro_course"
                 />
             }
         >
-            <div className="max-w-4xl space-y-8">
+            <div className="max-w-4xl space-y-10">
                 {/* Header */}
                 <div>
                     <Badge className="mb-3">Micro-Course</Badge>
-                    <h1 className="text-2xl font-semibold text-white">
-                        {data.title}
-                    </h1>
-                    <p className="mt-2 text-slate-400">
-                        {data.description}
-                    </p>
+                    <h1 className="text-2xl font-semibold text-white">{course.title}</h1>
+                    <p className="mt-2 text-slate-400">{course.description}</p>
                 </div>
 
-                {/* What’s inside */}
-                <Card className="p-6 bg-[#0f172a]/80 border border-white/10">
-                    <h2 className="text-lg font-semibold text-white mb-4">
-                        What’s included
-                    </h2>
+                {/* Assets */}
+                <Card className="p-6 bg-[#0f172a]/80 border border-white/10 space-y-4">
+                    <h2 className="text-lg font-semibold text-white">Course Content</h2>
 
-                    <ul className="space-y-2 text-slate-300 text-sm">
-                        <li>📄 Notes (PDF)</li>
-                        <li>📊 PPT Slides</li>
-                        <li>🧪 Quizzes</li>
-                        <li>📝 Internal Practice Test</li>
-                    </ul>
+                    {!assets?.length && (
+                        <p className="text-slate-400 text-sm">
+                            Content will be added soon.
+                        </p>
+                    )}
+
+                    {assets?.map((a) => (
+                        <div
+                            key={a.id}
+                            className="flex items-center justify-between p-3 border border-white/10 rounded"
+                        >
+                            <div>
+                                <p className="text-white text-sm">{a.title}</p>
+                                <p className="text-xs text-slate-400 uppercase">{a.type}</p>
+                            </div>
+
+                            <a
+                                href={a.url}
+                                target="_blank"
+                                className="text-blue-400 text-sm hover:underline"
+                            >
+                                Open
+                            </a>
+                        </div>
+                    ))}
                 </Card>
 
-                {/* CTA */}
+                {/* Practice Test */}
                 <div>
                     <Button asChild size="lg" className="rounded-xl">
                         <Link href={`/student/micro-courses/${params.id}/test`}>

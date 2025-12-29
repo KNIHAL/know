@@ -1,70 +1,36 @@
-import { requireAdmin } from "@/lib/guards/requireAdmin";
 import { supabase } from "@/lib/supabase";
-import { redirect } from "next/navigation";
-import PlatformMockQuestionForm from "@/components/admin/PlatformMockQuestionForm";
 import QuestionList from "@/components/admin/QuestionList";
 
-export default async function QuestionsPage({
+export default async function MockTestQuestions({
     params,
 }: {
     params: { id: string };
 }) {
-    const { allowed } = await requireAdmin();
-    if (!allowed) redirect("/admin/not-authorized");
+    const { data: test } = await supabase
+        .from("platform_mock_tests")
+        .select("id, title")
+        .eq("id", params.id)
+        .single();
+
+    if (!test) {
+        return <p className="text-slate-400">Mock test not found.</p>;
+    }
 
     const { data: questions } = await supabase
         .from("platform_mock_questions")
         .select("*")
         .eq("mock_test_id", params.id)
-        .order("order_index");
-
-    async function addQuestion(q: any) {
-        "use server";
-        await supabase.from("platform_mock_questions").insert({
-            ...q,
-            mock_test_id: params.id,
-        });
-    }
-
-    async function updateQuestion(id: string, q: any) {
-        "use server";
-        await supabase
-            .from("platform_mock_questions")
-            .update(q)
-            .eq("id", id);
-    }
-
-    async function deleteQuestion(id: string) {
-        "use server";
-        await supabase
-            .from("platform_mock_questions")
-            .delete()
-            .eq("id", id);
-    }
-
-    async function reorder(ids: string[]) {
-        "use server";
-        await Promise.all(
-            ids.map((id, index) =>
-                supabase
-                    .from("platform_mock_questions")
-                    .update({ order_index: index })
-                    .eq("id", id)
-            )
-        );
-    }
+        .order("created_at", { ascending: true });
 
     return (
         <div className="space-y-6">
-            <h1 className="text-xl font-semibold">Questions</h1>
-
-            <PlatformMockQuestionForm onSubmit={addQuestion} />
+            <h1 className="text-2xl font-semibold">
+                Questions — {test.title}
+            </h1>
 
             <QuestionList
+                mockTestId={params.id}
                 questions={questions || []}
-                onUpdate={updateQuestion}
-                onDelete={deleteQuestion}
-                onReorder={reorder}
             />
         </div>
     );

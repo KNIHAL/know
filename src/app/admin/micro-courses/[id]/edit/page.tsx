@@ -1,32 +1,35 @@
-import MicroCourseForm from "@/components/admin/MicroCourseForm";
 import { supabase } from "@/lib/supabase";
 import { redirect } from "next/navigation";
+import MicroCourseForm from "@/components/admin/MicroCourseForm";
+import AssetManager from "@/components/admin/AssetManager";
 
 export default async function EditMicroCourse({
     params,
 }: {
     params: { id: string };
 }) {
-    const { data } = await supabase
+    const { data: course } = await supabase
         .from("micro_courses")
         .select("*")
         .eq("id", params.id)
         .single();
 
-    async function updateCourse(updated: any) {
-        "use server";
-        await supabase
-            .from("micro_courses")
-            .update(updated)
-            .eq("id", params.id);
+    if (!course) redirect("/admin/micro-courses");
 
-        redirect("/admin/micro-courses");
-    }
+    const { data: assets } = await supabase
+        .from("micro_course_assets")
+        .select("*")
+        .eq("course_id", params.id)
+        .order("created_at", { ascending: true });
 
     return (
-        <div className="max-w-3xl">
-            <h1 className="text-xl font-semibold mb-4">Edit Micro-Course</h1>
-            <MicroCourseForm initialData={data} onSubmit={updateCourse} />
+        <div className="space-y-10">
+            <MicroCourseForm course={course} />
+
+            <AssetManager
+                courseId={params.id}
+                assets={assets || []}
+            />
         </div>
     );
 }

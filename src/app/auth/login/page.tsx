@@ -43,7 +43,7 @@ export default function LoginPage() {
         if (session?.user?.role === "student") {
             router.replace("/student/dashboard");
         } else if (session?.user?.role === "admin") {
-            router.replace("/teacher/dashboard");
+            router.replace("/admin");
         }
     };
 
@@ -326,7 +326,7 @@ export default function LoginPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.9 }}
                         >
-                            <Link href="/auth/role-page">
+                            <Link href="/auth/signup/student">
                                 <motion.button
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}

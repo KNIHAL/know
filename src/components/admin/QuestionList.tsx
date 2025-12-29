@@ -1,82 +1,155 @@
 "use client";
 
+import { useState, useTransition } from "react";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+type Question = {
+    id: string;
+    question: string;
+    options: Record<string, string>;
+    correct_option: string;
+    marks: number;
+};
 
 export default function QuestionList({
+    mockTestId,
     questions,
-    onUpdate,
-    onDelete,
-    onReorder,
 }: {
-    questions: any[];
-    onUpdate: (id: string, q: any) => Promise<void>;
-    onDelete: (id: string) => Promise<void>;
-    onReorder: (ids: string[]) => Promise<void>;
+    mockTestId: string;
+    questions: Question[];
 }) {
-    const [items, setItems] = useState(questions);
+    const [list, setList] = useState<Question[]>(questions);
+    const [pending, start] = useTransition();
+    const [form, setForm] = useState({
+        question: "",
+        options: { A: "", B: "", C: "", D: "" },
+        correct_option: "A",
+        marks: 1,
+    });
 
-    function move(index: number, dir: -1 | 1) {
-        const copy = [...items];
-        const target = index + dir;
-        if (target < 0 || target >= copy.length) return;
+    function updateOption(key: string, value: string) {
+        setForm({
+            ...form,
+            options: { ...form.options, [key]: value },
+        });
+    }
 
-        [copy[index], copy[target]] = [copy[target], copy[index]];
-        setItems(copy);
-        onReorder(copy.map((q) => q.id));
+    function addQuestion() {
+        start(async () => {
+            const { data } = await supabase
+                .from("platform_mock_questions")
+                .insert({
+                    mock_test_id: mockTestId,
+                    question: form.question,
+                    options: form.options,
+                    correct_option: form.correct_option,
+                    marks: form.marks,
+                })
+                .select()
+                .single();
+
+            if (data) {
+                setList([...list, data]);
+                setForm({
+                    question: "",
+                    options: { A: "", B: "", C: "", D: "" },
+                    correct_option: "A",
+                    marks: 1,
+                });
+            }
+        });
+    }
+
+    async function deleteQuestion(id: string) {
+        await supabase
+            .from("platform_mock_questions")
+            .delete()
+            .eq("id", id);
+
+        setList(list.filter((q) => q.id !== id));
     }
 
     return (
-        <div className="space-y-4">
-            {items.map((q, i) => (
-                <div
-                    key={q.id}
-                    className="border border-white/10 rounded-lg p-4 space-y-2"
-                >
-                    <div className="font-medium">
-                        Q{i + 1}. {q.question}
-                    </div>
+        <div className="space-y-8">
+            {/* Add Question */}
+            <div className="space-y-4 p-6 border border-white/10 rounded-lg">
+                <h2 className="font-semibold">Add Question</h2>
 
-                    <ul className="text-sm text-slate-400">
-                        {Object.entries(q.options).map(([k, v]: any) => (
-                            <li key={k}>
-                                {k}. {v}
-                            </li>
-                        ))}
-                    </ul>
+                <Textarea
+                    placeholder="Question text"
+                    value={form.question}
+                    onChange={(e) =>
+                        setForm({ ...form, question: e.target.value })
+                    }
+                />
 
-                    <div className="text-sm">
-                        ✅ Correct: {q.correct_option} | ⭐ Marks: {q.marks}
-                    </div>
+                {Object.entries(form.options).map(([k, v]) => (
+                    <Input
+                        key={k}
+                        placeholder={`Option ${k}`}
+                        value={v}
+                        onChange={(e) => updateOption(k, e.target.value)}
+                    />
+                ))}
 
-                    <div className="flex flex-wrap gap-2 pt-2">
+                <div className="flex gap-4">
+                    <Input
+                        placeholder="Correct Option (A/B/C/D)"
+                        value={form.correct_option}
+                        onChange={(e) =>
+                            setForm({ ...form, correct_option: e.target.value })
+                        }
+                    />
+
+                    <Input
+                        type="number"
+                        placeholder="Marks"
+                        value={form.marks}
+                        onChange={(e) =>
+                            setForm({ ...form, marks: Number(e.target.value) })
+                        }
+                    />
+                </div>
+
+                <Button disabled={pending} onClick={addQuestion}>
+                    Add Question
+                </Button>
+            </div>
+
+            {/* Existing Questions */}
+            <div className="space-y-4">
+                {list.map((q, i) => (
+                    <div
+                        key={q.id}
+                        className="p-4 border border-white/10 rounded-lg"
+                    >
+                        <p className="font-medium">
+                            {i + 1}. {q.question}
+                        </p>
+
+                        <ul className="text-sm text-slate-300 mt-2 space-y-1">
+                            {Object.entries(q.options).map(([k, v]) => (
+                                <li key={k}>
+                                    {k}. {v}
+                                    {q.correct_option === k && " ✅"}
+                                </li>
+                            ))}
+                        </ul>
+
                         <Button
                             size="sm"
                             variant="outline"
-                            onClick={() =>
-                                onUpdate(q.id, { marks: q.marks + 1 })
-                            }
-                        >
-                            +1 Mark
-                        </Button>
-
-                        <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => onDelete(q.id)}
+                            className="mt-3"
+                            onClick={() => deleteQuestion(q.id)}
                         >
                             Delete
                         </Button>
-
-                        <Button size="sm" onClick={() => move(i, -1)}>
-                            ↑
-                        </Button>
-                        <Button size="sm" onClick={() => move(i, 1)}>
-                            ↓
-                        </Button>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 }

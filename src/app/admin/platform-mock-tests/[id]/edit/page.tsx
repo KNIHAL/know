@@ -1,41 +1,48 @@
-import PlatformMockTestForm from "@/components/admin/PlatformMockTestForm";
 import { supabase } from "@/lib/supabase";
 import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/guards/requireAdmin";
+import { Button } from "@/components/ui/button";
+import { togglePlatformMockTestPublish } from "../../actions";
 
-export default async function EditPlatformMockTest({
+export default async function ReviewMockTest({
     params,
 }: {
     params: { id: string };
 }) {
-    const { allowed } = await requireAdmin();
-    if (!allowed) redirect("/admin/not-authorized");
-
-    const { data } = await supabase
+    const { data: test } = await supabase
         .from("platform_mock_tests")
-        .select("*")
+        .select("id, title, duration_minutes, total_marks, is_published")
         .eq("id", params.id)
         .single();
 
-    if (!data) {
-        return <p className="text-slate-400">Mock test not found</p>;
-    }
+    if (!test) redirect("/admin/platform-mock-tests");
 
-    async function updateTest(updated: any) {
-        "use server";
-
-        await supabase
-            .from("platform_mock_tests")
-            .update(updated)
-            .eq("id", params.id);
-
-        redirect("/admin/platform-mock-tests");
-    }
+    const { count } = await supabase
+        .from("platform_mock_questions")
+        .select("*", { count: "exact", head: true })
+        .eq("mock_test_id", params.id);
 
     return (
-        <div className="max-w-3xl space-y-4">
-            <h1 className="text-xl font-semibold">Edit Platform Mock Test</h1>
-            <PlatformMockTestForm initial={data} onSubmit={updateTest} />
+        <div className="max-w-xl space-y-6">
+            <h1 className="text-2xl font-semibold">Review Mock Test</h1>
+
+            <div className="text-slate-300 space-y-1">
+                <p><b>Title:</b> {test.title}</p>
+                <p><b>Duration:</b> {test.duration_minutes} minutes</p>
+                <p><b>Total Marks:</b> {test.total_marks}</p>
+                <p><b>Questions:</b> {count || 0}</p>
+                <p><b>Status:</b> {test.is_published ? "Published" : "Draft"}</p>
+            </div>
+
+            <form
+                action={async () => {
+                    "use server";
+                    await togglePlatformMockTestPublish(test.id, !test.is_published);
+                }}
+            >
+                <Button>
+                    {test.is_published ? "Unpublish" : "Publish"}
+                </Button>
+            </form>
         </div>
     );
 }

@@ -3,100 +3,67 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { useTransition } from "react";
+import { togglePlatformMockTestPublish } from "@/app/admin/platform-mock-tests/actions";
+import ConfirmActionButton from "./ConfirmActionButton";
 
-export default function PlatformMockTestTable({
-    tests,
-    onToggle,
-}: {
-    tests: any[];
-    onToggle: (id: string, value: boolean) => Promise<void>;
-}) {
-    const [isPending, startTransition] = useTransition();
+type Test = {
+    id: string;
+    title: string;
+    duration_minutes: number;
+    total_marks: number;
+    is_published: boolean;
+};
+
+export default function PlatformMockTestTable({ tests }: { tests: Test[] }) {
+    if (!tests.length) {
+        return (
+            <div className="p-8 text-slate-400 text-center border border-white/10 rounded-lg">
+                No platform mock tests yet.
+            </div>
+        );
+    }
 
     return (
-        <div className="space-y-4">
-            {/* Desktop */}
-            <div className="hidden md:block">
-                <table className="w-full text-sm border border-white/10">
-                    <thead className="bg-white/5">
-                        <tr>
-                            <th className="p-3 text-left">Title</th>
-                            <th className="p-3">Duration</th>
-                            <th className="p-3">Marks</th>
-                            <th className="p-3">Status</th>
-                            <th className="p-3">Publish</th>
-                            <th className="p-3">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tests.map((t) => (
-                            <tr key={t.id} className="border-t border-white/10">
-                                <td className="p-3">{t.title}</td>
-                                <td className="p-3">{t.duration_minutes} min</td>
-                                <td className="p-3">{t.total_marks}</td>
-                                <td className="p-3">
-                                    <Badge>{t.is_published ? "Published" : "Draft"}</Badge>
-                                </td>
-                                <td className="p-3">
-                                    <Switch
-                                        checked={t.is_published}
-                                        disabled={isPending}
-                                        onCheckedChange={(v) =>
-                                            startTransition(() => onToggle(t.id, v))
-                                        }
-                                    />
-                                </td>
-                                <td className="p-3 space-x-2">
-                                    <Link href={`/admin/platform-mock-tests/${t.id}/edit`}>
-                                        <Button size="sm" variant="outline">Edit</Button>
-                                    </Link>
-                                    <Link href={`/admin/platform-mock-tests/${t.id}/questions`}>
-                                        <Button size="sm">Questions</Button>
-                                    </Link>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            {/* Mobile */}
-            <div className="md:hidden space-y-3">
-                {tests.map((t) => (
-                    <div key={t.id} className="border border-white/10 p-4 rounded-lg">
-                        <div className="font-semibold">{t.title}</div>
-                        <div className="text-sm text-slate-400">
-                            {t.duration_minutes} min • {t.total_marks} marks
-                        </div>
-
-                        <div className="flex items-center justify-between mt-2">
-                            <Badge>{t.is_published ? "Published" : "Draft"}</Badge>
-                            <Switch
-                                checked={t.is_published}
-                                disabled={isPending}
-                                onCheckedChange={(v) =>
-                                    startTransition(() => onToggle(t.id, v))
-                                }
-                            />
-                        </div>
-
-                        <div className="mt-3 grid grid-cols-2 gap-2">
-                            <Link href={`/admin/platform-mock-tests/${t.id}/edit`}>
-                                <Button size="sm" variant="outline" className="w-full">
-                                    Edit
-                                </Button>
-                            </Link>
-                            <Link href={`/admin/platform-mock-tests/${t.id}/questions`}>
-                                <Button size="sm" className="w-full">
-                                    Questions
-                                </Button>
-                            </Link>
-                        </div>
+        <div className="space-y-3">
+            {tests.map((t) => (
+                <div
+                    key={t.id}
+                    className="flex items-center justify-between p-4 border border-white/10 rounded-lg"
+                >
+                    <div>
+                        <p className="text-white font-medium">{t.title}</p>
+                        <p className="text-sm text-slate-400">
+                            {t.duration_minutes} min · {t.total_marks} marks
+                        </p>
                     </div>
-                ))}
-            </div>
+
+                    <div className="flex items-center gap-3">
+                        <Badge variant={t.is_published ? "default" : "secondary"}>
+                            {t.is_published ? "Published" : "Draft"}
+                        </Badge>
+
+                        <Link href={`/admin/platform-mock-tests/${t.id}/edit`}>
+                            <Button size="sm" variant="outline">Edit</Button>
+                        </Link>
+
+                        <Link href={`/admin/platform-mock-tests/${t.id}/questions`}>
+                            <Button size="sm" variant="secondary">Questions</Button>
+                        </Link>
+
+                        <ConfirmActionButton
+                            label={t.is_published ? "Unpublish" : "Publish"}
+                            confirmText={
+                                t.is_published
+                                    ? "This test will be hidden from students."
+                                    : "This test will be visible to students."
+                            }
+                            onConfirm={() =>
+                                togglePlatformMockTestPublish(t.id, !t.is_published)
+                            }
+                        />
+                    </div>
+                </div>
+            ))}
         </div>
     );
 }

@@ -17,12 +17,15 @@ export default async function AdminLayout({
 
     return (
         <div className="flex min-h-screen bg-[#020617] text-white">
-            <AdminSidebar />
+            <div className="hidden lg:block">
+                <AdminSidebar />
+            </div>
 
             <div className="flex-1 flex flex-col">
                 <AdminTopbar />
-                <main className="p-6">{children}</main>
+                <main className="p-4 sm:p-6">{children}</main>
             </div>
         </div>
+
     );
 }
