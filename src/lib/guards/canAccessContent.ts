@@ -6,13 +6,11 @@ type ContentType = "micro_course" | "platform_mock_test";
 
 interface GuardInput {
   contentId: string;
-  contentType: ContentType;
   price?: number | null;
 }
 
 export async function canAccessContent({
   contentId,
-  contentType,
   price,
 }: GuardInput): Promise<{ allowed: boolean }> {
   // ✅ Free content → always allowed
@@ -33,7 +31,6 @@ export async function canAccessContent({
     .select("id")
     .eq("student_id", session.user.id)
     .eq("content_id", contentId)
-    .eq("content_type", contentType)
     .maybeSingle();
 
   return { allowed: !!data };

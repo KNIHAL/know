@@ -16,11 +16,12 @@ export default async function MicroCourseDetail({
         .eq("is_published", true)
         .single();
 
-    if (!course) redirect("/student/micro-courses");
+    if (!course) {
+        redirect("/student/micro-courses");
+    }
 
     const { allowed } = await canAccessContent({
         contentId: course.id,
-        contentType: "micro_course",
         price: course.price,
     });
 
