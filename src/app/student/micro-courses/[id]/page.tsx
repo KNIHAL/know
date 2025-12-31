@@ -85,14 +85,6 @@ export default async function MicroCourseDetail({
                     ))}
                 </Card>
 
-                {/* Practice Test */}
-                <div>
-                    <Button asChild size="lg" className="rounded-xl">
-                        <Link href={`/student/micro-courses/${params.id}/test`}>
-                            Start Practice Test
-                        </Link>
-                    </Button>
-                </div>
             </div>
         </PaidContentGuard>
     );

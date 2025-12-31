@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 type Item = {
     id: string;
     title: string;
-    type: "micro_course" | "platform_mock_test";
 };
 
 export default function MyContentPage() {
@@ -27,11 +26,11 @@ export default function MyContentPage() {
         async function loadMyContent() {
             setLoading(true);
 
-            // 1️⃣ Purchases
             const { data: purchases } = await supabase
                 .from("student_purchases")
-                .select("content_id, content_type")
-                .eq("student_id", userId);
+                .select("content_id")
+                .eq("student_id", userId)
+                .eq("content_type", "micro_course");
 
             if (!purchases || purchases.length === 0) {
                 setItems([]);
@@ -39,46 +38,14 @@ export default function MyContentPage() {
                 return;
             }
 
-            // 2️⃣ Split by type
-            const microIds = purchases
-                .filter(p => p.content_type === "micro_course")
-                .map(p => p.content_id);
+            const ids = purchases.map(p => p.content_id);
 
-            const mockIds = purchases
-                .filter(p => p.content_type === "platform_mock_test")
-                .map(p => p.content_id);
+            const { data } = await supabase
+                .from("micro_courses")
+                .select("id, title")
+                .in("id", ids);
 
-            // 3️⃣ Fetch content
-            const [microRes, mockRes] = await Promise.all([
-                microIds.length
-                    ? supabase
-                        .from("micro_courses")
-                        .select("id, title")
-                        .in("id", microIds)
-                    : Promise.resolve({ data: [] }),
-                mockIds.length
-                    ? supabase
-                        .from("platform_mock_tests")
-                        .select("id, title")
-                        .in("id", mockIds)
-                    : Promise.resolve({ data: [] }),
-            ]);
-
-            const merged: Item[] = [
-                ...(microRes.data || []).map((c: any) => ({
-                    id: c.id,
-                    title: c.title,
-                    type: "micro_course" as const,
-                })),
-                ...(mockRes.data || []).map((t: any) => ({
-                    id: t.id,
-                    title: t.title,
-                    type: "platform_mock_test" as const,
-                })),
-            ];
-
-
-            setItems(merged);
+            setItems(data || []);
             setLoading(false);
         }
 
@@ -87,39 +54,29 @@ export default function MyContentPage() {
 
     return (
         <div className="max-w-5xl space-y-8">
-            {/* Header */}
             <div>
                 <h1 className="text-2xl font-semibold text-white">My Content</h1>
                 <p className="text-slate-400 mt-1">
-                    Access all the courses and tests you’ve unlocked
+                    Access all the micro-courses you’ve purchased
                 </p>
             </div>
 
-            {/* Body */}
             {loading ? (
                 <p className="text-slate-400">Loading...</p>
             ) : items.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {items.map((item) => (
+                    {items.map(item => (
                         <Card
-                            key={`${item.type}-${item.id}`}
+                            key={item.id}
                             className="p-5 bg-[#0f172a]/80 border border-white/10"
                         >
                             <div className="flex items-center justify-between mb-3">
                                 <h3 className="text-white font-medium">{item.title}</h3>
-                                <Badge variant="secondary">
-                                    {item.type === "micro_course" ? "Micro-Course" : "Mock Test"}
-                                </Badge>
+                                <Badge variant="secondary">Micro-Course</Badge>
                             </div>
 
                             <Button asChild size="sm">
-                                <Link
-                                    href={
-                                        item.type === "micro_course"
-                                            ? `/student/micro-courses/${item.id}`
-                                            : `/student/mock-tests/${item.id}`
-                                    }
-                                >
+                                <Link href={`/student/micro-courses/${item.id}`}>
                                     Open
                                 </Link>
                             </Button>
@@ -129,7 +86,7 @@ export default function MyContentPage() {
             ) : (
                 <Card className="p-10 text-center bg-[#0f172a]/80 border border-white/10">
                     <p className="text-slate-400">
-                        You haven’t unlocked any content yet.
+                        You haven’t unlocked any micro-courses yet.
                     </p>
                 </Card>
             )}

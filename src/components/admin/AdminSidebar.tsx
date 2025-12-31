@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, BookOpen, FileQuestion, LogOut } from "lucide-react";
+import { LayoutDashboard, BookOpen, LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 const items = [
@@ -15,11 +15,6 @@ const items = [
         label: "Micro-Courses",
         href: "/admin/micro-courses",
         icon: BookOpen,
-    },
-    {
-        label: "Mock Tests",
-        href: "/admin/platform-mock-tests",
-        icon: FileQuestion,
     },
 ];
 

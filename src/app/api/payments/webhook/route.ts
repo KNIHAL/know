@@ -3,7 +3,11 @@ import { supabase } from "@/lib/supabase";
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const signature = req.headers.get("x-razorpay-signature")!;
+  const signature = req.headers.get("x-razorpay-signature");
+
+  if (!signature) {
+    return new Response("Missing signature", { status: 400 });
+  }
 
   const expected = crypto
     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
@@ -17,13 +21,15 @@ export async function POST(req: Request) {
   const event = JSON.parse(body);
 
   if (event.event === "payment.captured") {
-    const receipt = event.payload.payment.entity.notes.receipt;
-    const [type, contentId] = receipt.split("_");
+    const payment = event.payload.payment.entity;
+
+    // receipt format: micro_course_<contentId>
+    const contentId = payment.receipt.split("_")[2];
 
     await supabase.from("student_purchases").insert({
-      student_id: event.payload.payment.entity.notes.student_id,
+      user_id: payment.notes.user_id, // ensure this is sent during order creation
       content_id: contentId,
-      content_type: type,
+      content_type: "micro_course",
     });
   }
 

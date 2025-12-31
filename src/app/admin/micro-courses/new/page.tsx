@@ -1,18 +1,18 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import MicroCourseForm from "@/components/admin/MicroCourseForm";
-import { supabase } from "@/lib/supabase";
-import { redirect } from "next/navigation";
 
 export default function NewMicroCourse() {
-    async function createCourse(data: any) {
-        "use server";
-        await supabase.from("micro_courses").insert(data);
-        redirect("/admin/micro-courses");
-    }
+    const router = useRouter();
 
     return (
-        <div className="max-w-3xl">
-            <h1 className="text-xl font-semibold mb-4">Create Micro-Course</h1>
-            <MicroCourseForm onSubmit={createCourse} />
+        <div className="max-w-3xl space-y-4">
+            <h1 className="text-xl font-semibold">Create Micro-Course</h1>
+
+            <MicroCourseForm
+                onSuccess={() => router.push("/admin/micro-courses")}
+            />
         </div>
     );
 }

@@ -2,33 +2,54 @@
 
 import { Button } from "@/components/ui/button";
 
+declare global {
+    interface Window {
+        Razorpay: any;
+    }
+}
+
+function loadRazorpay(): Promise<boolean> {
+    return new Promise((resolve) => {
+        if (window.Razorpay) return resolve(true);
+
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+    });
+}
+
 export default function BuyNowButton({
     price,
     contentId,
-    contentType,
 }: {
     price: number;
     contentId: string;
-    contentType: "micro_course" | "platform_mock_test";
 }) {
     async function buyNow() {
+        const loaded = await loadRazorpay();
+        if (!loaded) {
+            alert("Razorpay failed to load");
+            return;
+        }
+
         const res = await fetch("/api/payments/create-order", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 amount: price,
                 contentId,
-                contentType,
+                contentType: "micro_course",
             }),
         });
 
         const order = await res.json();
 
-        const rzp = new (window as any).Razorpay({
+        const rzp = new window.Razorpay({
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
             order_id: order.id,
-            handler: function () {
-                alert("Payment successful. Access unlocked.");
+            handler: () => {
                 window.location.reload();
             },
         });
