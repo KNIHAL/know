@@ -25,7 +25,6 @@ export default async function MicroCourseDetail({
 
     const { allowed } = await canAccessContent({
         contentId: course.id,
-        contentType: "micro_course",
         price: course.price,
     });
 
@@ -42,7 +41,6 @@ export default async function MicroCourseDetail({
                 <BuyNowButton
                     price={course.price}
                     contentId={course.id}
-                    contentType="micro_course"
                 />
             }
         >
