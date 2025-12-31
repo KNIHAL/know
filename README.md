@@ -1,36 +1,204 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KNOW – A Minimal Learning Platform
 
-## Getting Started
+KNOW is a **minimal, end‑to‑end learning platform** built with **Next.js App Router**, **Supabase**, and **NextAuth**.
 
-First, run the development server:
+This project started as a full‑fledged ed‑tech idea but was **intentionally simplified** and is now released as an **open‑source showcase project** focused on:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+* Clean architecture
+* Real‑world authentication & authorization
+* Paid content gating
+* Admin‑driven content management
+
+The goal of this repository is **learning by building**, not feature bloat.
+
+---
+
+## 🚀 What KNOW Does
+
+* Users can **sign up / log in**
+* Students can **view micro‑courses**
+* Paid content is **locked behind purchase checks**
+* Admin can **create & manage micro‑courses**
+* Payments handled via **Razorpay**
+
+> Notes, PPTs, and videos are intentionally stored as **external URLs** (Notion, Google Drive, YouTube) to keep the platform simple.
+
+---
+
+> This repo shows **how to simplify a product without breaking architecture**.
+
+---
+
+## 🧩 Tech Stack
+
+* **Next.js 14 (App Router)**
+* **TypeScript**
+* **Supabase (PostgreSQL + Auth + Storage)**
+* **NextAuth** (Credentials + Session)
+* **Razorpay** (Payments)
+* **Tailwind CSS + shadcn/ui**
+
+---
+
+## 📁 Project Structure
+
+```txt
+D:\KNOW\SRC
+│   middleware.ts
+│
+├───app
+│   │   globals.css
+│   │   layout.tsx
+│   │   page.tsx
+│   │   providers.tsx
+│   │
+│   ├───admin
+│   │   │   layout.tsx
+│   │   │   not-authorized.tsx
+│   │   │   page.tsx
+│   │   │
+│   │   └───micro-courses
+│   │       │   actions.ts
+│   │       │   page.tsx
+│   │       │
+│   │       ├───new
+│   │       │       page.tsx
+│   │       │
+│   │       └───[id]
+│   │           └───edit
+│   │                   page.tsx
+│   │
+│   ├───api
+│   │   ├───auth
+│   │   │   ├───signup
+│   │   │   │       route.ts
+│   │   │   │
+│   │   │   └───[...nextauth]
+│   │   │           route.ts
+│   │   │
+│   │   └───payments
+│   │       ├───create-order
+│   │       │       route.ts
+│   │       │
+│   │       └───webhook
+│   │               route.ts
+│   │
+│   ├───auth
+│   │   ├───forget-password
+│   │   ├───login
+│   │   ├───reset-password
+│   │   └───signup
+│   │       └───student
+│   │
+│   ├───student
+│   │   │   layout.tsx
+│   │   ├───dashboard
+│   │   ├───micro-courses
+│   │   ├───my-content
+│   │   └───settings
+│   │
+│   └───utils
+│           authOptions.ts
+│
+├───components
+│   ├───admin
+│   ├───landing
+│   ├───student
+│   └───ui
+│
+├───lib
+│   ├───supabase.ts
+│   └───guards
+│       └───canAccessContent.ts
+│
+└───types
+    └───next-auth.d.ts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔐 Authentication Design (Important Learning)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Why `authOptions` is in `app/utils/authOptions.ts`
 
-## Learn More
+Instead of defining auth logic inside:
 
-To learn more about Next.js, take a look at the following resources:
+```
+/app/api/auth/[...nextauth]/route.ts
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+It is extracted into:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+/app/utils/authOptions.ts
+```
 
-## Deploy on Vercel
+**Reasons:**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* Cleaner separation of concerns
+* Reusable across server components & guards
+* Avoids Vercel edge/runtime limitations
+* Makes testing & scaling easier
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This is a **real‑world best practice** for App Router apps.
+
+---
+
+## 🛡 Authorization Guard
+
+Paid content is protected using a server‑side guard:
+
+```ts
+canAccessContent({ contentId, price })
+```
+
+Rules:
+
+* Free content → always allowed
+* Paid content → requires login + purchase
+
+No `contentType` abstraction is used anymore → **simpler & safer**.
+
+---
+
+## 💳 Payments (Razorpay)
+
+* Order creation via API route
+* Webhook verifies payment signature
+* Purchase stored in `student_purchases`
+
+Receipt length issues, client SDK loading, and signature verification were all **intentionally debugged & fixed** during development.
+
+---
+
+## 📚 What I Learned From This Project
+
+* App Router authentication patterns
+* Why simpler schemas scale better
+* TypeScript error‑driven design
+* Real payment gateway integration
+* When to **delete features instead of fixing them**
+* How to turn a failed idea into a clean showcase repo
+
+---
+
+## 🧑‍💻 Who This Repo Is For
+
+* Beginners learning **Next.js App Router**
+* Developers learning **auth + payments**
+* Anyone building a **clean SaaS foundation**
+
+Feel free to fork, reuse, or simplify even more.
+
+---
+
+## 📄 License
+
+MIT License – use it freely.
+
+---
+
+### ⭐ Final Note
+
+> This project is intentionally **finished**.
+
