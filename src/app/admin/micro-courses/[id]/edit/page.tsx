@@ -1,9 +1,10 @@
 import { supabase } from "@/lib/supabase";
 import { redirect } from "next/navigation";
-import MicroCourseForm from "@/components/admin/MicroCourseForm";
-import AssetManager from "@/components/admin/AssetManager";
+import PaidContentGuard from "@/components/student/PaidContentGuard";
+import BuyNowButton from "@/components/student/BuyNowButton";
+import { canAccessContent } from "@/lib/guards/canAccessContent";
 
-export default async function EditMicroCourse({
+export default async function MicroCourseDetail({
     params,
 }: {
     params: { id: string };
@@ -12,24 +13,66 @@ export default async function EditMicroCourse({
         .from("micro_courses")
         .select("*")
         .eq("id", params.id)
+        .eq("is_published", true)
         .single();
 
-    if (!course) redirect("/admin/micro-courses");
+    if (!course) redirect("/student/micro-courses");
 
-    const { data: assets } = await supabase
-        .from("micro_course_assets")
-        .select("*")
-        .eq("course_id", params.id)
-        .order("created_at", { ascending: true });
+    const { allowed } = await canAccessContent({
+        contentId: course.id,
+        contentType: "micro_course",
+        price: course.price,
+    });
 
     return (
-        <div className="space-y-10">
-            <MicroCourseForm course={course} />
+        <PaidContentGuard
+            allowed={allowed}
+            fallback={
+                <BuyNowButton
+                    price={course.price}
+                    contentId={course.id}
+                />
+            }
+        >
+            <div className="max-w-4xl space-y-6">
+                <h1 className="text-2xl font-semibold text-white">
+                    {course.title}
+                </h1>
 
-            <AssetManager
-                courseId={params.id}
-                assets={assets || []}
-            />
-        </div>
+                <p className="text-slate-400">
+                    {course.description}
+                </p>
+
+                {course.video_url && (
+                    <a
+                        href={course.video_url}
+                        target="_blank"
+                        className="text-blue-400 underline"
+                    >
+                        Watch Video
+                    </a>
+                )}
+
+                {course.notes && (
+                    <a
+                        href={course.notes}
+                        target="_blank"
+                        className="text-blue-400 underline"
+                    >
+                        Open Notes
+                    </a>
+                )}
+
+                {course.ppt_url && (
+                    <a
+                        href={course.ppt_url}
+                        target="_blank"
+                        className="text-blue-400 underline"
+                    >
+                        Open PPT
+                    </a>
+                )}
+            </div>
+        </PaidContentGuard>
     );
 }
