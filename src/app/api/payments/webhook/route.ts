@@ -29,7 +29,6 @@ export async function POST(req: Request) {
     await supabase.from("student_purchases").insert({
       user_id: payment.notes.user_id, // ensure this is sent during order creation
       content_id: contentId,
-      content_type: "micro_course",
     });
   }
 
