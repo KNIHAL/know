@@ -1,6 +1,6 @@
-# KNOW – A Minimal Learning Platform
+# KNOW – A EduTech Platform
 
-KNOW is a **minimal, end‑to‑end learning platform** built with **Next.js App Router**, **Supabase**, and **NextAuth**.
+KNOW is a **end‑to‑end learning platform** built with **Next.js App Router**, **Supabase**, and **NextAuth**.
 
 This project started as a full‑fledged ed‑tech idea but was **intentionally simplified** and is now released as an **open‑source showcase project** focused on:
 
